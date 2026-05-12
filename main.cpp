@@ -47,22 +47,16 @@ public:
         }
     }
 
-    unsigned count_errors(){
-        unsigned count_errors = 0;
-        for(size_t i = 0; i < _points.size(); i++){
-            double min_rho = std::min(
-                rho(std::pair(sqrt(2)/2, sqrt(2)/2), _noise_points[i] ), std::min(
-                    rho(std::pair(sqrt(2)/2, -sqrt(2)/2), _noise_points[i]), std::min(
-                        rho(std::pair(-sqrt(2)/2, sqrt(2)/2), _noise_points[i]),
-                        rho(std::pair(-sqrt(2)/2, -sqrt(2)/2), _noise_points[i]))
-                    )
-                );
-            if(std::abs(rho(_points[i], _noise_points[i])- min_rho) <= 1e-9) {
-                continue;
-            }
-            count_errors += 2;
+    unsigned count_errors() {
+        unsigned errors = 0;
+        for (size_t i = 0; i < _points.size(); i++) {
+            int bit1 = _noise_points[i].first > 0 ? 1 : 0;
+            int bit2 = _noise_points[i].second > 0 ? 1 : 0;
+            
+            if (bit1 != _bits[2*i]) errors++;
+            if (bit2 != _bits[2*i+1]) errors++;
         }
-        return count_errors;
+        return errors;
     }
 
     double rho(const std::pair<double, double>& a, const std::pair<double, double>& b) {
@@ -84,15 +78,15 @@ int main() {
     if (!file.is_open()) {
         throw std::runtime_error("Cannot open file for writing");
     }
+    file << "sigma,errors,ber\n";
 
     QPSK qpsk(bits);
-    for(double i = 0; i < 1; i += 1/20 ){
-        qpsk.add_noise(i);
-        file << i << ", " << qpsk.count_errors() << "\n";
+    for (double sigma = 0.0; sigma <= 100.0; sigma += 1) {
+        qpsk.add_noise(sigma);
+        unsigned errors = qpsk.count_errors();
+        double ber = static_cast<double>(errors) / size_data;
+        file << sigma << "," << errors << "," << ber << "\n"; 
     }
-    qpsk.add_noise((sqrt(2)/2)/1);
-    qpsk.write_points_to_file();
-    std::cout<<qpsk.count_errors() << "\n";
 
     return 0;
 }
