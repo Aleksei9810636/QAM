@@ -77,10 +77,6 @@ public:
 };
 
 class QAM16: public QAM{
-    size_t _size_data;
-    std::vector<int> _bits;
-    std::vector<std::pair<double, double>> _points;
-    std::vector<std::pair<double, double>> _noise_points;
 public:
     QAM16(const std::vector<int>& bits) {
         if (bits.size() % 4 != 0) {
@@ -121,10 +117,6 @@ public:
 };
 
 class QAM64: public QAM{
-    size_t _size_data;
-    std::vector<int> _bits;
-    std::vector<std::pair<double, double>> _points;
-    std::vector<std::pair<double, double>> _noise_points;
 public:
     QAM64(const std::vector<int>& bits) {
         if (bits.size() % 6 != 0) {
@@ -193,7 +185,7 @@ int main() {
         double ber = static_cast<double>(errors) / size_data;
         file_qpsk << sigma << "," << errors << "," << ber << "\n"; 
     }
-    qpsk.add_noise(1.0);
+    qpsk.add_noise(0.3);
     qpsk.write_points_to_file();
 }
 {
@@ -209,7 +201,7 @@ int main() {
         double ber = static_cast<double>(errors) / size_data;
         file_qam16 << sigma << "," << errors << "," << ber << "\n"; 
     }
-    qam16.add_noise(1.0);
+    qam16.add_noise(0.25);
     qam16.write_points_to_file();
 }
 {
@@ -226,7 +218,7 @@ int main() {
         double ber = static_cast<double>(errors) / size_data;
         file_qam64 << sigma << "," << errors << "," << ber << "\n"; 
     }
-    qam64.add_noise(1.0);
+    qam64.add_noise(0.125);
     qam64.write_points_to_file();
 }
     return 0;

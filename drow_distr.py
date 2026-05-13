@@ -1,14 +1,12 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Список файлов и названий
 files = [
     ('results/points_QPSK.csv', 'QPSK'),
     ('results/points_QAM16.csv', 'QAM16'),
     ('results/points_QAM64.csv', 'QAM64')
 ]
 
-# Создаём окно с 3 подграфиками (1 ряд, 3 колонки)
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
 for ax, (filename, title) in zip(axes, files):
@@ -23,9 +21,7 @@ for ax, (filename, title) in zip(axes, files):
         ax.set_ylabel('Q')
         ax.set_title(f'{title}\n({filename})')
         ax.axis('equal')
-        
-        print(f"Загружен {filename}: {len(df)} точек")
-        
+                
     except FileNotFoundError:
         ax.text(0.5, 0.5, f'Файл не найден:\n{filename}', 
                 ha='center', va='center', transform=ax.transAxes)
@@ -33,5 +29,5 @@ for ax, (filename, title) in zip(axes, files):
         print(f"Файл не найден: {filename}")
 
 plt.tight_layout()
-plt.savefig('results/constellations.png', dpi=150)
-print("График сохранён в results/constellations.png")
+plt.savefig('results/pioints_all.png', dpi=150)
+print("График сохранён в results/pioints_all.png")
