@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Читаем данные
-df = pd.read_csv('results/error_sigma_qpsk.csv')
+df = pd.read_csv('results/error_sigma_qam64.csv')
 
 # Строим график
 plt.figure(figsize=(10, 6))
@@ -16,5 +16,5 @@ plt.grid(True, alpha=0.3)
 
 
 plt.tight_layout()
-plt.savefig('results/ber_plot_qpsk.png', dpi=150)
+plt.savefig('results/ber_plot_qam64.png', dpi=150)
 plt.show()

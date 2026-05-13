@@ -12,6 +12,10 @@ double rho(const std::pair<double, double>& a, const std::pair<double, double>& 
     return sqrt(dx*dx + dy*dy);
 }
 
+class noisy{
+    
+}
+
 class QPSK {
     size_t _size_data;
     std::vector<int> _bits;
@@ -232,19 +236,19 @@ int main() {
     qam16.write_points_to_file();
 }
 {
-    std::ofstream file_qam64("results/error_sigma_qam16.csv");
+    std::ofstream file_qam64("results/error_sigma_qam64.csv");
     if (!file_qam64.is_open()) {
         throw std::runtime_error("Cannot open file for writing");
     }
     file_qam64 << "sigma,errors,ber\n";
     QAM64 qam64(bits);
     qam64.add_noise(0.1);
-    // for (double sigma = 0.0; sigma <= 10; sigma += 0.1) {
-    //     qam64.add_noise(sigma);
-    //     unsigned errors = qam64.count_errors();
-    //     double ber = static_cast<double>(errors) / size_data;
-    //     file_qam64 << sigma << "," << errors << "," << ber << "\n"; 
-    // }
+    for (double sigma = 0.0; sigma <= 10; sigma += 0.1) {
+        qam64.add_noise(sigma);
+        unsigned errors = qam64.count_errors();
+        double ber = static_cast<double>(errors) / size_data;
+        file_qam64 << sigma << "," << errors << "," << ber << "\n"; 
+    }
     qam64.write_points_to_file();
 }
     return 0;
