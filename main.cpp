@@ -173,15 +173,21 @@ public:
             double x = _noise_points[i].first;
             double y = _noise_points[i].second;
 
-            int bit1 = ((x>-1 and x<=0)or(x>=1)) ? 1 : 0;                
-            int bit2 = x>0 ? 1 : 0;
-            int bit3 = (y>-1 && y<=0)||(y>=1) ? 1 : 0;                
-            int bit4 = y>0 ? 1 : 0;
+            int bit1 = (0.5<x && x<1.5)||(2.5<x && x<3.5)
+                ||(4.5<x && x<5.5)||(6.5<x) ? 1 : 0;                
+            int bit2 = ((x>5.5)||(x>1.5 && x<3.5)) ? 1 : 0;
+            int bit3 = (x>=3.5) ? 1 : 0;
+            int bit4 = (0.5<y && y<1.5)||(2.5<y && y<3.5)
+                ||(4.5<y && y<5.5)||(6.5<y) ? 1 : 0;                
+            int bit5 = ((y>5.5)||(y>1.5 && y<3.5)) ? 1 : 0;
+            int bit6 = (y>=3.5) ? 1 : 0;          
 
-            if (bit1 != _bits[4*i]) errors++;
-            if (bit2 != _bits[4*i+1]) errors++;
-            if (bit3 != _bits[4*i+2]) errors++;
-            if (bit4 != _bits[4*i+3]) errors++;
+            if (bit1 != _bits[6*i]) errors++;
+            if (bit2 != _bits[6*i+1]) errors++;
+            if (bit3 != _bits[6*i+2]) errors++;
+            if (bit4 != _bits[6*i+3]) errors++;
+            if (bit5 != _bits[6*i+4]) errors++;
+            if (bit6 != _bits[6*i+5]) errors++;
         }
         return errors;
     }
