@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cmath>
 #include <stdexcept>
+#include <string>
 
 
 double rho(const std::pair<double, double>& a, const std::pair<double, double>& b) {
@@ -12,15 +13,34 @@ double rho(const std::pair<double, double>& a, const std::pair<double, double>& 
     return sqrt(dx*dx + dy*dy);
 }
 
-class noisy{
-    
-}
-
-class QPSK {
+class QAM{
+protected:
     size_t _size_data;
     std::vector<int> _bits;
     std::vector<std::pair<double, double>> _points;
     std::vector<std::pair<double, double>> _noise_points;
+
+public:
+    void add_noise(double sigma) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::normal_distribution<double> dist(0, sigma);
+        for (size_t i = 0; i < _points.size(); i++) {
+            _noise_points[i] = std::pair(_points[i].first + dist(gen), _points[i].second + dist(gen));
+        }
+    }
+    void write_points_to_file(std::string name = "default") {
+        std::ofstream file("results/" + name + ".csv");
+        if (!file.is_open()) {
+            throw std::runtime_error("Cannot open file for writing");
+        }
+        for (auto p : _noise_points) {
+            file << p.first << ", " << p.second << "\n";
+        }
+    }
+};
+
+class QPSK: public QAM {
 public:
     QPSK(const std::vector<int>& bits) {
         if (bits.size() % 2 != 0) {
@@ -39,23 +59,8 @@ public:
         _noise_points.resize(_points.size());
     }
 
-    void add_noise(double sigma) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::normal_distribution<double> dist(0, sigma);
-        for (size_t i = 0; i < _points.size(); i++) {
-            _noise_points[i] = std::pair(_points[i].first + dist(gen), _points[i].second + dist(gen));
-        }
-    }
-
-    void write_points_to_file() const {
-        std::ofstream file("results/points.csv");
-        if (!file.is_open()) {
-            throw std::runtime_error("Cannot open file for writing");
-        }
-        for (auto p : _noise_points) {
-            file << p.first << ", " << p.second << "\n";
-        }
+    void write_points_to_file(std::string name = "points_QPSK") {
+        QAM::write_points_to_file(name);
     }
 
     unsigned count_errors() {
@@ -71,7 +76,7 @@ public:
     }
 };
 
-class QAM16{
+class QAM16: public QAM{
     size_t _size_data;
     std::vector<int> _bits;
     std::vector<std::pair<double, double>> _points;
@@ -91,23 +96,8 @@ public:
         _noise_points.resize(_points.size());
     }
 
-    void add_noise(double sigma) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::normal_distribution<double> dist(0, sigma);
-        for (size_t i = 0; i < _points.size(); i++) {
-            _noise_points[i] = std::pair(_points[i].first + dist(gen), _points[i].second + dist(gen));
-        }
-    }
-
-    void write_points_to_file() const {
-        std::ofstream file("results/points.csv");
-        if (!file.is_open()) {
-            throw std::runtime_error("Cannot open file for writing");
-        }
-        for (auto p : _noise_points) {
-            file << p.first << ", " << p.second << "\n";
-        }
+    void write_points_to_file(std::string name = "points_QAM16") {
+        QAM::write_points_to_file(name);
     }
 
     unsigned count_errors() {
@@ -130,7 +120,7 @@ public:
     }
 };
 
-class QAM64{
+class QAM64: public QAM{
     size_t _size_data;
     std::vector<int> _bits;
     std::vector<std::pair<double, double>> _points;
@@ -152,23 +142,8 @@ public:
         _noise_points.resize(_points.size());
     }
 
-    void add_noise(double sigma) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::normal_distribution<double> dist(0, sigma);
-        for (size_t i = 0; i < _points.size(); i++) {
-            _noise_points[i] = std::pair(_points[i].first + dist(gen), _points[i].second + dist(gen));
-        }
-    }
-
-    void write_points_to_file() const {
-        std::ofstream file("results/points.csv");
-        if (!file.is_open()) {
-            throw std::runtime_error("Cannot open file for writing");
-        }
-        for (auto p : _noise_points) {
-            file << p.first << ", " << p.second << "\n";
-        }
+    void write_points_to_file(std::string name = "points_QAM64") {
+        QAM::write_points_to_file(name);
     }
 
     unsigned count_errors() {
@@ -218,6 +193,7 @@ int main() {
         double ber = static_cast<double>(errors) / size_data;
         file_qpsk << sigma << "," << errors << "," << ber << "\n"; 
     }
+    qpsk.add_noise(1.0);
     qpsk.write_points_to_file();
 }
 {
@@ -233,6 +209,7 @@ int main() {
         double ber = static_cast<double>(errors) / size_data;
         file_qam16 << sigma << "," << errors << "," << ber << "\n"; 
     }
+    qam16.add_noise(1.0);
     qam16.write_points_to_file();
 }
 {
@@ -249,6 +226,7 @@ int main() {
         double ber = static_cast<double>(errors) / size_data;
         file_qam64 << sigma << "," << errors << "," << ber << "\n"; 
     }
+    qam64.add_noise(1.0);
     qam64.write_points_to_file();
 }
     return 0;
