@@ -30,4 +30,3 @@ for ax, (filename, title) in zip(axes, files):
 
 plt.tight_layout()
 plt.savefig('results/pioints_all.png', dpi=150)
-print("График сохранён в results/pioints_all.png")
